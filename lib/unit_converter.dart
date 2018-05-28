@@ -48,7 +48,6 @@ class _UnitConverterState extends State<UnitConverter> {
   }
 
 
-  // TODO: (Gestures) _createDropdownMenuItems() and _setDefaults() should also be called
   // each time the user switches [Categories].
 
   /// Creates fresh list of [DropdownMenuItem] widgets, given a list of [Unit]s.

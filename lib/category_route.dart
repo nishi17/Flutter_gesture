@@ -9,16 +9,20 @@ import 'backdrop.dart';
 
 
 class CategoryRoute extends StatefulWidget {
-  const CategoryRoute();
 
   @override
   _CategoryRouteState createState() => _CategoryRouteState();
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
+
+
   Category _defaultCategory;
+
   Category _currentCategory;
+
   final _categories = <Category>[];
+
   static const _categoryNames = <String>[
     'Length',
     'Area',
@@ -29,7 +33,9 @@ class _CategoryRouteState extends State<CategoryRoute> {
     'Energy',
     'Currency',
   ];
+
   static const _baseColors = <ColorSwatch>[
+
     ColorSwatch(0xFF6AB7A8, {
       'highlight': Color(0xFF6AB7A8),
       'splash': Color(0xFF0ABC9B),
@@ -68,6 +74,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
   @override
   void initState() {
     super.initState();
+
     for (var i = 0; i < _categoryNames.length; i++) {
       var category = Category(
         name: _categoryNames[i],
@@ -80,6 +87,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
       }
       _categories.add(category);
     }
+
   }
 
   /// Function to call when a [Category] is tapped.
@@ -95,6 +103,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
   Widget _buildCategoryWidgets() {
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
+
+        //CategoryTile use for the Row of each category
         return CategoryTile(
           category: _categories[index],
           onTap: _onCategoryTap,
@@ -118,10 +128,11 @@ class _CategoryRouteState extends State<CategoryRoute> {
   @override
   Widget build(BuildContext context) {
     final listView = Padding(
+
       padding: EdgeInsets.only(
-        left: 8.0,
+        left:8.0,
         right: 8.0,
-        bottom: 48.0,
+        bottom: 38.0,
       ),
       child: _buildCategoryWidgets(),
     );

@@ -19,17 +19,16 @@ class UnitConverterApp extends StatelessWidget {
 
       title: 'Unit Converter',
 
-      // TODO:(TextInput) Fill out the theme parameter
       theme: ThemeData(
 
           textTheme: Theme
               .of(context)
               .textTheme
-              .apply(bodyColor: Colors.black, displayColor: Colors.grey[600]),
+              .apply(bodyColor: Colors.pink, displayColor: Colors.purple[600]),
 
-          primaryColor: Colors.grey[500],
+          primaryColor: Colors.yellow[500],
 
-          textSelectionHandleColor: Colors.green[500])  ,
+          textSelectionHandleColor: Colors.orangeAccent[400])  ,
 
       home: CategoryRoute(),
     );
