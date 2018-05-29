@@ -5,7 +5,6 @@ import 'package:meta/meta.dart';
 
 import 'category.dart';
 
-
 const double _kFlingVelocity = 2.0;
 
 class _BackdropPanel extends StatelessWidget {
@@ -135,7 +134,6 @@ class Backdrop extends StatefulWidget {
 
 class _BackdropState extends State<Backdrop>
     with SingleTickerProviderStateMixin {
-
   final GlobalKey _backdropKey = GlobalKey(debugLabel: 'Backdrop');
 
   AnimationController _controller;
@@ -160,7 +158,7 @@ class _BackdropState extends State<Backdrop>
       setState(() {
         _controller.fling(
             velocity:
-            _backdropPanelVisible ? -_kFlingVelocity : _kFlingVelocity);
+                _backdropPanelVisible ? -_kFlingVelocity : _kFlingVelocity);
       });
     } else if (!_backdropPanelVisible) {
       setState(() {
@@ -184,6 +182,18 @@ class _BackdropState extends State<Backdrop>
   void _toggleBackdropPanelVisibility() {
     _controller.fling(
         velocity: _backdropPanelVisible ? -_kFlingVelocity : _kFlingVelocity);
+
+
+
+
+
+    double a = MediaQuery.of(context).viewInsets.bottom;
+    if (a >= 200.0) {
+      print('hello  $a');
+      FocusScope.of(context).requestFocus(new FocusNode());
+      _controller.fling(
+          velocity: _backdropPanelVisible ? -_kFlingVelocity : _kFlingVelocity);
+    }
   }
 
   double get _backdropHeight {
@@ -214,7 +224,7 @@ class _BackdropState extends State<Backdrop>
     else
       _controller.fling(
           velocity:
-          _controller.value < 0.5 ? -_kFlingVelocity : _kFlingVelocity);
+              _controller.value < 0.5 ? -_kFlingVelocity : _kFlingVelocity);
   }
 
   Widget _buildStack(BuildContext context, BoxConstraints constraints) {

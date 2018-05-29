@@ -9,7 +9,10 @@ class Category {
   final String name;
   final ColorSwatch color;
   final List<Unit> units;
-  final IconData iconLocation;
+
+
+  // TODO:(Unit 10 assert category Image ) Change this to a String path to the image asset
+  final /*IconData*/String  iconLocation;
 
   /// Information about a [Category].
   ///

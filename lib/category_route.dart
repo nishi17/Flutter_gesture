@@ -1,11 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_gestures/category.dart';
-import 'package:flutter_gestures/unit.dart';
-import 'package:flutter_gestures/category_tile.dart';
 
-import 'package:flutter_gestures/unit_converter.dart';
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 
 import 'backdrop.dart';
+import 'category.dart';
+import 'category_tile.dart';
+import 'unit.dart';
+import 'unit_converter.dart';
 
 
 class CategoryRoute extends StatefulWidget {
@@ -23,7 +26,9 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
   final _categories = <Category>[];
 
-  static const _categoryNames = <String>[
+
+  // TODO: (1 Unit 9 assert Json file )Remove _categoryNames as they will be retrieved from the JSON asset
+/*  static const _categoryNames = <String>[
     'Length',
     'Area',
     'Volume',
@@ -32,7 +37,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
     'Digital Storage',
     'Energy',
     'Currency',
-  ];
+  ];*/
 
   static const _baseColors = <ColorSwatch>[
 
@@ -71,7 +76,11 @@ class _CategoryRouteState extends State<CategoryRoute> {
     }),
   ];
 
-  @override
+
+  // TODO:( 2 Unit 9 assert Json file) Remove the overriding of initState(). Instead, we use
+  // didChangeDependencies()
+
+ /* @override
   void initState() {
     super.initState();
 
@@ -88,7 +97,84 @@ class _CategoryRouteState extends State<CategoryRoute> {
       _categories.add(category);
     }
 
+  }*/
+
+/*  /// Returns a list of mock [Unit]s.
+  List<Unit> _retrieveUnitList(String categoryName) {
+    return List.generate(10, (int i) {
+      i += 1;
+      return Unit(
+        name: '$categoryName Unit $i',
+        conversion: i.toDouble(),
+      );
+    });
+  }*/
+
+
+
+  // TODO: (Unit 10 assert category Image ) Add image asset paths here
+  static const _icons = <String>[
+    'assets/icons/length.png',
+    'assets/icons/area.png',
+    'assets/icons/volume.png',
+    'assets/icons/mass.png',
+    'assets/icons/time.png',
+    'assets/icons/digital_storage.png',
+    'assets/icons/power.png',
+    'assets/icons/currency.png',
+  ];
+
+
+ // We use didChangeDependencies() so that we can
+  // wait for our JSON asset to be loaded in (async).
+
+  @override
+  Future<void> didChangeDependencies() async {
+    super.didChangeDependencies();
+    // We have static unit conversions located in our
+    // assets/data/regular_units.json
+    if (_categories.isEmpty) {
+      await _retrieveLocalCategories();
+    }
   }
+
+  /// Retrieves a list of [Categories] and their [Unit]s
+  Future<void> _retrieveLocalCategories() async {
+    // Consider omitting the types for local variables. For more details on Effective
+    // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
+    final json = DefaultAssetBundle
+        .of(context)
+        .loadString('assets/data/regular_units.json');
+    final data = JsonDecoder().convert(await json);
+    if (data is! Map) {
+      throw ('Data retrieved from API is not a Map');
+    }
+
+    // TODO:( 3  Unit 9 assert Json file) Create Categories and their list of Units, from the JSON asset
+
+    var categoryIndex = 0;
+    data.keys.forEach((key) {
+      final List<Unit> units =
+      data[key].map<Unit>((dynamic data) => Unit.fromJson(data)).toList();
+
+      var category = Category(
+        name: key,
+        units: units,
+        color: _baseColors[categoryIndex],
+        // TODO:(Unit 10 assert category Image ) Replace the placeholder icon with an icon image path
+        iconLocation: /*Icons.cake*/_icons[categoryIndex],
+      );
+      setState(() {
+        if (categoryIndex == 0) {
+          _defaultCategory = category;
+        }
+        _categories.add(category);
+      });
+      categoryIndex += 1;
+    });
+  }
+
+
 
   /// Function to call when a [Category] is tapped.
   void _onCategoryTap(Category category) {
@@ -99,42 +185,51 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
   /// Makes the correct number of rows for the list view.
   ///
-  /// For portrait, we use a [ListView].
-  Widget _buildCategoryWidgets() {
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
+  /// For portrait, we use a [ListView].For landscape, we use a [GridView].
+  ///
+  Widget _buildCategoryWidgets(Orientation deviceOrientation) {
 
-        //CategoryTile use for the Row of each category
-        return CategoryTile(
-          category: _categories[index],
-          onTap: _onCategoryTap,
-        );
-      },
-      itemCount: _categories.length,
-    );
-  }
-
-  /// Returns a list of mock [Unit]s.
-  List<Unit> _retrieveUnitList(String categoryName) {
-    return List.generate(10, (int i) {
-      i += 1;
-      return Unit(
-        name: '$categoryName Unit $i',
-        conversion: i.toDouble(),
+    if (deviceOrientation == Orientation.portrait) {
+      return ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return CategoryTile(
+            category: _categories[index],
+            onTap: _onCategoryTap,
+          );
+        },
+        itemCount: _categories.length,
       );
-    });
+    } else {
+      return GridView.count(
+        crossAxisCount: 2,
+        childAspectRatio: 3.0,
+        children: _categories.map((Category c) {
+          return CategoryTile(
+            category: c,
+            onTap: _onCategoryTap,
+          );
+        }).toList(),
+      );
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
+
+    // Based on the device size, figure out how to best lay out the list
+    // You can also use MediaQuery.of(context).size to calculate the orientation
+    assert(debugCheckHasMediaQuery(context));
+
     final listView = Padding(
 
       padding: EdgeInsets.only(
         left:8.0,
         right: 8.0,
-        bottom: 38.0,
+        bottom: 48.0,
       ),
-      child: _buildCategoryWidgets(),
+      child: _buildCategoryWidgets(MediaQuery.of(context).orientation),
     );
 
     return Backdrop(

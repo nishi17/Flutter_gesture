@@ -28,6 +28,8 @@ class _UnitConverterState extends State<UnitConverter> {
   String _convertedValue = '';
   List<DropdownMenuItem> _unitMenuItems;
   bool _showValidationError = false;
+  final _inputKey = GlobalKey(debugLabel: 'inputText');
+  final TextEditingController _controller = new TextEditingController();
 
   @override
   void initState() {
@@ -35,7 +37,6 @@ class _UnitConverterState extends State<UnitConverter> {
     _createDropdownMenuItems();
     _setDefaults();
   }
-
 
   @override
   void didUpdateWidget(UnitConverter old) {
@@ -46,7 +47,6 @@ class _UnitConverterState extends State<UnitConverter> {
       _setDefaults();
     }
   }
-
 
   // each time the user switches [Categories].
 
@@ -73,6 +73,8 @@ class _UnitConverterState extends State<UnitConverter> {
   /// updated output value if a user had previously entered an input.
   void _setDefaults() {
     setState(() {
+      _controller.clear();
+      _convertedValue = '';
       _fromValue = widget.category.units[0];
       _toValue = widget.category.units[1];
     });
@@ -123,7 +125,7 @@ class _UnitConverterState extends State<UnitConverter> {
 
   Unit _getUnit(String unitName) {
     return widget.category.units.firstWhere(
-          (Unit unit) {
+      (Unit unit) {
         return unit.name == unitName;
       },
       orElse: null,
@@ -163,8 +165,8 @@ class _UnitConverterState extends State<UnitConverter> {
       child: Theme(
         // This sets the color of the [DropdownMenuItem]
         data: Theme.of(context).copyWith(
-          canvasColor: Colors.grey[50],
-        ),
+              canvasColor: Colors.grey[50],
+            ),
         child: DropdownButtonHideUnderline(
           child: ButtonTheme(
             alignedDropdown: true,
@@ -191,6 +193,8 @@ class _UnitConverterState extends State<UnitConverter> {
           // accepts numbers and calls the onChanged property on update.
           // You can read more about it here: https://flutter.io/text-input
           TextField(
+            key: _inputKey,
+            controller: _controller,
             style: Theme.of(context).textTheme.display1,
             decoration: InputDecoration(
               labelStyle: Theme.of(context).textTheme.display1,
@@ -241,8 +245,7 @@ class _UnitConverterState extends State<UnitConverter> {
       ),
     );
 
-    final converter = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    final converter = ListView(
       children: [
         input,
         arrows,
@@ -252,7 +255,20 @@ class _UnitConverterState extends State<UnitConverter> {
 
     return Padding(
       padding: _padding,
-      child: converter,
+      child: OrientationBuilder(
+        builder: (BuildContext context, Orientation orientation) {
+          if (orientation == Orientation.portrait) {
+            return converter;
+          } else {
+            return Center(
+              child: Container(
+                width: 450.0,
+                child: converter,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
